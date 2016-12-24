@@ -27,7 +27,7 @@ From XML:
         android:id="@+id/main_activity_multi_line_radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        multi_line_radio_group:default_button="@string/button_2"
+        multi_line_radio_group:default_button="button_2"
         multi_line_radio_group:max_in_row="3"
         multi_line_radio_group:radio_buttons="@array/radio_buttons" />
 ```
