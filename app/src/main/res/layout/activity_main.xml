@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_activity_main_layout_lnr_lyt"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.whygraphics.multilineradiogroup.MultiLineRadioGroup xmlns:multi_line_radio_group="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_activity_multi_line_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        multi_line_radio_group:default_button="@string/button_2"
+        multi_line_radio_group:max_in_row="@integer/radio_button_max_in_row"
+        multi_line_radio_group:radio_buttons="@array/radio_buttons" />
+</LinearLayout>
