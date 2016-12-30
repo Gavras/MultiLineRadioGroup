@@ -6,6 +6,9 @@ package com.whygraphics.multilineradiogroup;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ import android.widget.TableRow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Layout that arranges radio buttons in multiple lines.
@@ -46,6 +50,9 @@ public class MultiLineRadioGroup extends RadioGroup {
     private static final String XML_DEFAULT_BUTTON_PREFIX_TEXT = "text:";
 
     private static final int DEF_VAL_MAX_IN_ROW = 0;
+
+    // for generating ids to APIs lower than 17
+    private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
     // the listener for callbacks to invoke when radio button is checked
     private OnCheckedChangeListener mOnCheckedChangeListener;
@@ -186,6 +193,15 @@ public class MultiLineRadioGroup extends RadioGroup {
     }
 
     /**
+     * Returns the maximum radio buttons in a row, 0 for all in one line.
+     *
+     * @return the maximum radio buttons in a row, 0 for all in one line
+     */
+    public int getMaxInRow() {
+        return mMaxInRow;
+    }
+
+    /**
      * Sets the maximum radio buttons in a row, 0 for all in one line
      * and arranges the layout accordingly.
      *
@@ -313,10 +329,35 @@ public class MultiLineRadioGroup extends RadioGroup {
         for (int i = 0; i < buttons.length; i++) {
             RadioButton radioButton = getRadioButton();
             radioButton.setText(radioButtons[i]);
+            radioButton.setId(generateId());
             buttons[i] = radioButton;
         }
 
         addButtons(index, buttons);
+    }
+
+    // generate an id
+    private int generateId() {
+        // for API 17 or higher
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return View.generateViewId();
+
+            // for API lower than 17
+        } else {
+
+            while (true) {
+                final int result = sNextGeneratedId.get();
+
+                // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
+                int newValue = result + 1;
+                if (newValue > 0x00FFFFFF)
+                    newValue = 1; // Roll over to 1, not 0.
+
+                if (sNextGeneratedId.compareAndSet(result, newValue))
+                    return result;
+            }
+
+        }
     }
 
     /**
@@ -752,15 +793,126 @@ public class MultiLineRadioGroup extends RadioGroup {
     }
 
     /**
+     * Returns a parcelable representing the saved state of this layout.
+     *
+     * @return a parcelable representing the saved state of this layout
+     */
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcelable = super.onSaveInstanceState();
+
+        SavedState savedState = new SavedState(parcelable);
+
+        savedState.mMaxInRow = this.mMaxInRow;
+        savedState.mCheckedButtonIndex = getCheckedRadioButtonIndex();
+
+        return savedState;
+    }
+
+    /**
+     * Restores the state of this layout from a parcelable.
+     *
+     * @param state the parcelable
+     */
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
+
+        if (!(state instanceof SavedState))
+            return;
+
+        SavedState savedState = (SavedState) state;
+
+        setMaxInRow(savedState.mMaxInRow);
+        checkAt(savedState.mCheckedButtonIndex);
+    }
+
+    /**
      * Interface definition for a callback to be invoked when a radio button is checked.
      */
     public interface OnCheckedChangeListener {
         /**
          * Called when a radio button is checked.
          *
-         * @param group  the MultiLineRadioGroup that stores the radio button
+         * @param group  the group that stores the radio button
          * @param button the radio button that was checked
          */
-        void onCheckedChanged(MultiLineRadioGroup group, RadioButton button);
+        void onCheckedChanged(ViewGroup group, RadioButton button);
+    }
+
+    /**
+     * A class definition to save and restore a state of this layout.
+     */
+    private static class SavedState extends BaseSavedState {
+
+        /**
+         * The creator of this class.
+         */
+        public static final Parcelable.Creator CREATOR =
+                new Creator<SavedState>() {
+
+                    /**
+                     * Creates SavedState instance from a specified parcel.
+                     *
+                     * @param in the parcel to create from
+                     * @return an instance of SavedState
+                     */
+                    @Override
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    /**
+                     * Creates a new array of the Parcelable class,
+                     * with every entry initialized to null.
+                     *
+                     * @param size the size of the array.
+                     * @return an array of the Parcelable class
+                     */
+                    @Override
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+
+                };
+
+        int mMaxInRow;
+        int mCheckedButtonIndex;
+
+        /**
+         * Constructor called by derived classes when creating their SavedState objects.
+         *
+         * @param superState the state of the superclass of this view
+         */
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        /**
+         * Constructor to create a new instance with the specified parcel.
+         *
+         * @param in the parcel
+         */
+        SavedState(Parcel in) {
+            super(in);
+
+            mMaxInRow = in.readInt();
+            mCheckedButtonIndex = in.readInt();
+        }
+
+        /**
+         * Saves this object to a parcel.
+         *
+         * @param out   the parcel to write to
+         * @param flags additional flags about how the object should be written,
+         *              May be 0 or PARCELABLE_WRITE_RETURN_VALUE
+         */
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+
+            out.writeInt(mMaxInRow);
+            out.writeInt(mCheckedButtonIndex);
+        }
     }
 }

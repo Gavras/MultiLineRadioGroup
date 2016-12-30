@@ -2,6 +2,7 @@ package com.whygraphics.multilineradiogroup;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ public class MainActivity extends Activity {
         // sets the listener
         mMultiLineRadioGroup.setOnCheckedChangeListener(new MultiLineRadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(MultiLineRadioGroup group, RadioButton button) {
+            public void onCheckedChanged(ViewGroup group, RadioButton button) {
                 Toast.makeText(MainActivity.this,
                         button.getText() + " was clicked",
                         Toast.LENGTH_SHORT).show();
