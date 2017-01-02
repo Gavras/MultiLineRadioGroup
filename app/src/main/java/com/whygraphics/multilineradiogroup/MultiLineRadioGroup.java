@@ -140,7 +140,7 @@ public class MultiLineRadioGroup extends RadioGroup {
             int index = Integer.parseInt(indexString);
             if (index < 0 || index >= mRadioButtons.size())
                 throw new IllegalArgumentException("index must be between 0 to getRadioButtonCount() - 1 [" +
-                        (getRadioButtonCount() - 1) + "]");
+                        (getRadioButtonCount() - 1) + "]: " + index);
             buttonToCheck = mRadioButtons.get(index).getText().toString();
 
         } else if (string.startsWith(XML_DEFAULT_BUTTON_PREFIX_TEXT)) {
@@ -174,7 +174,10 @@ public class MultiLineRadioGroup extends RadioGroup {
     }
 
     /**
-     * Returns the radio button to set in this layout.
+     * Returns the default radio button to set in this layout.
+     * <p>
+     * This radio button will be used when radio buttons are added
+     * with the methods addButtons() that accept string varargs.
      *
      * @return the radio button
      */
@@ -210,7 +213,7 @@ public class MultiLineRadioGroup extends RadioGroup {
      */
     public void setMaxInRow(int maxInRow) {
         if (maxInRow < 0)
-            throw new IllegalArgumentException("maxInRow must not be negative");
+            throw new IllegalArgumentException("maxInRow must not be negative: " + maxInRow);
         this.mMaxInRow = maxInRow;
         arrangeButtons();
     }
@@ -257,7 +260,7 @@ public class MultiLineRadioGroup extends RadioGroup {
 
     /**
      * Adds a view to the layout with the specified layout params.
-     * Note that for radio buttons the params are ignored.
+     * Note that for radio buttons the width and the height are ignored.
      * <p>
      * Consider using addButtons() instead
      *
@@ -272,7 +275,7 @@ public class MultiLineRadioGroup extends RadioGroup {
     /**
      * Adds a view to the layout in the specified index
      * with the specified layout params.
-     * Note that for radio buttons the params are ignored.
+     * Note that for radio buttons the width and the height are ignored.
      * <p>
      * * Consider using addButtons() instead
      *
@@ -319,7 +322,7 @@ public class MultiLineRadioGroup extends RadioGroup {
     public void addButtons(int index, CharSequence... radioButtons) {
         if (index < -1 || index > mRadioButtons.size())
             throw new IllegalArgumentException("index must be between -1 to getRadioButtonCount() [" +
-                    getRadioButtonCount() + "]");
+                    getRadioButtonCount() + "]: " + index);
 
         if (radioButtons == null)
             return;
@@ -383,7 +386,7 @@ public class MultiLineRadioGroup extends RadioGroup {
     public void addButtons(int index, RadioButton... radioButtons) {
         if (index < -1 || index > mRadioButtons.size())
             throw new IllegalArgumentException("index must be between -1 to getRadioButtonCount() [" +
-                    getRadioButtonCount() + "]");
+                    getRadioButtonCount() + "]: " + index);
 
         if (radioButtons == null)
             return;
@@ -521,11 +524,11 @@ public class MultiLineRadioGroup extends RadioGroup {
      */
     public void removeButtons(int start, int count) {
         if (start < 0 || start >= mRadioButtons.size())
-            throw new IllegalArgumentException("remove index must be between 0 to getRadioButtonCount() - 1 [" +
-                    (getRadioButtonCount() - 1) + "]");
+            throw new IllegalArgumentException("start index must be between 0 to getRadioButtonCount() - 1 [" +
+                    (getRadioButtonCount() - 1) + "]: " + start);
 
         if (count < 0)
-            throw new IllegalArgumentException("count must not be negative");
+            throw new IllegalArgumentException("count must not be negative: " + count);
 
         if (count == 0)
             return;
