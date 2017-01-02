@@ -336,7 +336,7 @@ public class MultiLineRadioGroup extends RadioGroup {
         addButtons(index, buttons);
     }
 
-    // generate an id
+    // generates an id
     private int generateId() {
         // for API 17 or higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
