@@ -1,6 +1,28 @@
 # MultiLineRadioGroup
 Multi Line Radio Group is a Radio Group layout to show radio buttons in more than one line.
 
+## Setup
+
+In your project's build.gradle file:
+```
+allprojects {
+    repositories {
+        ...
+        maven { 
+            url "https://jitpack.io"
+        }
+        ...
+    }
+}
+```
+In your Application's or Module's build.gradle file:
+```
+dependencies {
+    ...
+    compile 'com.github.Gavras:MultiLineRadioGroup:1.0'
+    ...
+}
+```
 ## XML Attributes:
  
  XML Attributes:
@@ -48,7 +70,7 @@ MultiLineRadioGroup mMultiLineRadioGroup = (MultiLineRadioGroup) findViewById(R.
 
 mMultiLineRadioGroup.setOnCheckedChangeListener(new MultiLineRadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(MultiLineRadioGroup group, RadioButton button) {
+            public void onCheckedChanged(ViewGroup group, RadioButton button) {
                 Toast.makeText(MainActivity.this,
                         button.getText() + " was clicked",
                         Toast.LENGTH_SHORT).show();
