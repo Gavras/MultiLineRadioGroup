@@ -1,6 +1,6 @@
 /*
-* Written by Tzlil Gavra
-* */
+ * Written by Tzlil Gavra
+ */
 
 package com.whygraphics.multilineradiogroup;
 
@@ -675,6 +675,20 @@ public class MultiLineRadioGroup extends RadioGroup {
             return null;
 
         return mRadioButtons.get(index);
+    }
+
+    /**
+     * Returns true if there is a button with the specified text, false otherwise.
+     *
+     * @param button the text to search
+     * @return true if there is a button with the specified text, false otherwise
+     */
+    public boolean containsButton(String button) {
+        for (RadioButton radioButton : mRadioButtons)
+            if (radioButton.getText().equals(button))
+                return true;
+
+        return false;
     }
 
     /**
