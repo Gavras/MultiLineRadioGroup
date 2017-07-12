@@ -523,6 +523,9 @@ public class MultiLineRadioGroup extends RadioGroup {
      *                                  or count is negative
      */
     public void removeButtons(int start, int count) {
+        if (count == 0) {
+            return;
+        }
         if (start < 0 || start >= mRadioButtons.size())
             throw new IllegalArgumentException("start index must be between 0 to getRadioButtonCount() - 1 [" +
                     (getRadioButtonCount() - 1) + "]: " + start);
