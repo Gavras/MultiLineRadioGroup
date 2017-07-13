@@ -532,10 +532,7 @@ public class MultiLineRadioGroup extends RadioGroup {
 
         if (count < 0)
             throw new IllegalArgumentException("count must not be negative: " + count);
-
-        if (count == 0)
-            return;
-
+        
         int endIndex = start + count - 1;
         // if endIndex is not in the range of the radio buttons sets it to the last index
         if (endIndex >= mRadioButtons.size())
