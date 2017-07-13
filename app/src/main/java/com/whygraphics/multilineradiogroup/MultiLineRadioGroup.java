@@ -407,10 +407,10 @@ public class MultiLineRadioGroup extends RadioGroup {
         radioButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkButton((RadioButton) v);
-
-                if (mOnCheckedChangeListener != null)
+                boolean didCheckStateChange = checkButton((RadioButton) v);
+                if (didCheckStateChange && mOnCheckedChangeListener != null) {
                     mOnCheckedChangeListener.onCheckedChanged(MultiLineRadioGroup.this, mCheckedButton);
+                }
             }
         });
     }
@@ -743,21 +743,21 @@ public class MultiLineRadioGroup extends RadioGroup {
         checkButton(mRadioButtons.get(index));
     }
 
-    // checks and switches the button with mCheckedButton
-    private void checkButton(RadioButton button) {
-        if (button == null)
-            return;
+    // checks and switches the button with mCheckedButton, returns true if check state changes
+    private boolean checkButton(RadioButton button) {
+        if (button == null || button == mCheckedButton) {
+            return false;
+        }
 
         // if the button to check is different from the current checked button
-        if (button != mCheckedButton) {
-
-            // if exists un-checks mCheckedButton
-            if (mCheckedButton != null)
-                mCheckedButton.setChecked(false);
-
-            button.setChecked(true);
-            mCheckedButton = button;
+        // if exists un-checks mCheckedButton
+        if (mCheckedButton != null) {
+            mCheckedButton.setChecked(false);
         }
+
+        button.setChecked(true);
+        mCheckedButton = button;
+        return true;
     }
 
     /**
