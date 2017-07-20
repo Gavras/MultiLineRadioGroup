@@ -2,6 +2,7 @@ package com.whygraphics.multilineradiogroup;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.ViewGroup;
@@ -18,6 +19,20 @@ import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class MultiLineRadioGroupTest {
+
+    @Test
+    public void configChange() {
+
+
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
+
+        Parcelable parcelable = testObject.onSaveInstanceState();
+
+        testObject.onRestoreInstanceState(parcelable);
+    }
+
+
     @Test
     public void removeAllButtonsHappyPath() throws Exception {
         Context appContext = InstrumentationRegistry.getTargetContext();
