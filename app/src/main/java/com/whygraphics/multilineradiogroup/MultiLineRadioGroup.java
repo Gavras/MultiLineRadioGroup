@@ -532,7 +532,7 @@ public class MultiLineRadioGroup extends RadioGroup {
 
         if (count < 0)
             throw new IllegalArgumentException("count must not be negative: " + count);
-        
+
         int endIndex = start + count - 1;
         // if endIndex is not in the range of the radio buttons sets it to the last index
         if (endIndex >= mRadioButtons.size())
@@ -833,13 +833,13 @@ public class MultiLineRadioGroup extends RadioGroup {
      */
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        super.onRestoreInstanceState(state);
-
-        if (!(state instanceof SavedState))
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
             return;
+        }
 
         SavedState savedState = (SavedState) state;
-
+        super.onRestoreInstanceState(savedState.getSuperState());
         setMaxInRow(savedState.mMaxInRow);
         checkAt(savedState.mCheckedButtonIndex);
     }
