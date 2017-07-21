@@ -19,7 +19,7 @@ In your Application's or Module's build.gradle file:
 ```
 dependencies {
     ...
-    compile 'com.github.Gavras:MultiLineRadioGroup:v1.0.0.2'
+    compile 'com.github.Gavras:MultiLineRadioGroup:v1.0.0.3'
     ...
 }
 ```
