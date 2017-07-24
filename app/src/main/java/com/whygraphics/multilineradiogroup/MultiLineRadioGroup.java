@@ -56,6 +56,7 @@ public class MultiLineRadioGroup extends RadioGroup {
 
     // the listener for callbacks to invoke when radio button is checked
     private OnCheckedChangeListener mOnCheckedChangeListener;
+    private OnClickListener mOnClickListener;
 
     // holds the maximum number of radio buttons that should be in a row
     private int mMaxInRow;
@@ -187,12 +188,16 @@ public class MultiLineRadioGroup extends RadioGroup {
     }
 
     /**
-     * Register a callback to be invoked when a radio button is checked.
+     * Register a callback to be invoked when a radio button checked state changes
      *
      * @param onCheckedChangeListener the listener to attach
      */
     public void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
         this.mOnCheckedChangeListener = onCheckedChangeListener;
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        this.mOnClickListener = listener;
     }
 
     /**
@@ -404,12 +409,15 @@ public class MultiLineRadioGroup extends RadioGroup {
 
     // inits the radio button
     private void initRadioButton(RadioButton radioButton) {
-        radioButton.setOnClickListener(new OnClickListener() {
+        radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean didCheckStateChange = checkButton((RadioButton) v);
                 if (didCheckStateChange && mOnCheckedChangeListener != null) {
                     mOnCheckedChangeListener.onCheckedChanged(MultiLineRadioGroup.this, mCheckedButton);
+                }
+                if (mOnClickListener != null) {
+                    mOnClickListener.onClick(MultiLineRadioGroup.this, mCheckedButton);
                 }
             }
         });
@@ -855,6 +863,20 @@ public class MultiLineRadioGroup extends RadioGroup {
          * @param button the radio button that was checked
          */
         void onCheckedChanged(ViewGroup group, RadioButton button);
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when a radio button is clicked.
+     * clicking a radio button multiple times will result in multiple callbacks.
+     */
+    public interface OnClickListener {
+        /**
+         * Called when a radio button is checked.
+         *
+         * @param group  the group that stores the radio button
+         * @param button the radio button that was checked
+         */
+        void onClick(ViewGroup group, RadioButton button);
     }
 
     /**

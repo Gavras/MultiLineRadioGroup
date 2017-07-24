@@ -13,8 +13,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
@@ -22,8 +25,6 @@ public class MultiLineRadioGroupTest {
 
     @Test
     public void configChange() {
-
-
         Context appContext = InstrumentationRegistry.getTargetContext();
         MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
 
@@ -31,7 +32,6 @@ public class MultiLineRadioGroupTest {
 
         testObject.onRestoreInstanceState(parcelable);
     }
-
 
     @Test
     public void removeAllButtonsHappyPath() throws Exception {
@@ -108,7 +108,7 @@ public class MultiLineRadioGroupTest {
     }
 
     @Test
-    public void baseRadioGroupClickAgainDoesNotEmitEvent() throws InterruptedException {
+    public void baseRadioGroupOnClickAgainDoesNotEmitEvent() throws InterruptedException {
         Context appContext = InstrumentationRegistry.getTargetContext();
         RadioGroup radioGroup = new RadioGroup(appContext);
         CountingOnCheckedChangeListener listener = new CountingOnCheckedChangeListener();
@@ -120,7 +120,7 @@ public class MultiLineRadioGroupTest {
     }
 
     @Test
-    public void multiLineRadioGroupClickAgainDoesNotEmitEvent() throws InterruptedException {
+    public void multiLineRadioGroupOnClickAgainDoesNotEmitEvent() throws InterruptedException {
         Context appContext = InstrumentationRegistry.getTargetContext();
         MultiLineRadioGroup radioGroup = new MultiLineRadioGroup(appContext);
         MultilineOnCheckedChangeListener onCheckedChangeListener = new MultilineOnCheckedChangeListener();
@@ -129,6 +129,28 @@ public class MultiLineRadioGroupTest {
         clickAgainDoesNotEmitEvent(appContext, radioGroup);
 
         assertEquals(1, onCheckedChangeListener.count);
+    }
+
+    @Test
+    public void onClickButtonCallsCustomOnClickListener() throws InterruptedException {
+        final AtomicInteger clickCounter = new AtomicInteger(0);
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
+        final RadioButton radioButton = new RadioButton(appContext);
+        testObject.addView(radioButton);
+        testObject.setOnClickListener(new MultiLineRadioGroup.OnClickListener() {
+            @Override
+            public void onClick(ViewGroup group, RadioButton button) {
+                clickCounter.incrementAndGet();
+                assertSame(testObject, group);
+                assertSame(radioButton, button);
+            }
+        });
+
+        clickButton(radioButton);
+
+        assertEquals(1, clickCounter.get());
+        assertTrue(radioButton.isChecked());
     }
 
     @SuppressLint("SetTextI18n")
