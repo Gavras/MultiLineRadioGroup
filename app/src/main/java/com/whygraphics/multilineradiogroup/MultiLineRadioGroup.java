@@ -773,7 +773,12 @@ public class MultiLineRadioGroup extends RadioGroup {
      */
     @Override
     public void clearCheck() {
-        mCheckedButton.setChecked(false);
+        if (mCheckedButton != null) {
+            mCheckedButton.setChecked(false);
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChanged(this, mCheckedButton);
+            }
+        }
         mCheckedButton = null;
     }
 

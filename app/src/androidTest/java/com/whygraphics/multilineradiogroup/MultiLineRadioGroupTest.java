@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Parcelable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -12,6 +13,10 @@ import android.widget.RadioGroup;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -120,6 +125,110 @@ public class MultiLineRadioGroupTest {
     }
 
     @Test
+    public void baseRadioGroupOnCheckChangeEmitOnlyCheckEvent() throws InterruptedException {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        RadioGroup radioGroup = new RadioGroup(appContext);
+        CountingOnCheckedChangeListener listener = new CountingOnCheckedChangeListener();
+        radioGroup.setOnCheckedChangeListener(listener);
+
+        final RadioButton firstButton = new RadioButton(appContext);
+        firstButton.setText("first");
+        firstButton.setId(R.id.multi_line_radio_group_default_radio_button);
+        radioGroup.addView(firstButton);
+        final RadioButton secondButton = new RadioButton(appContext);
+        secondButton.setText("second");
+        secondButton.setId(R.id.multi_line_radio_group_default_table_row);
+        radioGroup.addView(secondButton);
+
+        clickButton(secondButton);
+        clickButton(firstButton);
+
+        assertEquals(2, listener.count);
+        assertEquals(Arrays.asList(true, true), listener.buttonState);
+        assertEquals(Arrays.asList("second", "first"), listener.buttonText);
+    }
+
+    @Test
+    public void baseRadioGroupOnCheckChangeEmitsOnClearCheck() throws InterruptedException {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final RadioGroup radioGroup = new RadioGroup(appContext);
+        CountingOnCheckedChangeListener listener = new CountingOnCheckedChangeListener();
+        radioGroup.setOnCheckedChangeListener(listener);
+
+        final RadioButton firstButton = new RadioButton(appContext);
+        firstButton.setText("first");
+        firstButton.setId(R.id.multi_line_radio_group_default_radio_button);
+        radioGroup.addView(firstButton);
+        assertEquals(0, listener.count);
+
+        clickButton(firstButton);
+        assertEquals(1, listener.count);
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                radioGroup.clearCheck();
+            }
+        });
+
+        assertEquals(Arrays.asList(true, false), listener.buttonState);
+        assertEquals(Arrays.asList("first", "first", null), listener.buttonText);
+        assertEquals(3, listener.count);
+    }
+
+    @Test
+    public void multiLIneRadioGroupOnCheckChangeEmitsOnClearCheck() throws InterruptedException {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final MultiLineRadioGroup radioGroup = new MultiLineRadioGroup(appContext);
+        MultilineOnCheckedChangeListener listener = new MultilineOnCheckedChangeListener();
+        radioGroup.setOnCheckedChangeListener(listener);
+
+        final RadioButton firstButton = new RadioButton(appContext);
+        firstButton.setText("first");
+        firstButton.setId(R.id.multi_line_radio_group_default_radio_button);
+        radioGroup.addView(firstButton);
+        assertEquals(0, listener.count);
+
+        clickButton(firstButton);
+        assertEquals(1, listener.count);
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                radioGroup.clearCheck();
+            }
+        });
+
+        assertEquals(Arrays.asList("first", "first"), listener.buttonText);
+        assertEquals(Arrays.asList(true, false), listener.buttonState);
+        assertEquals(2, listener.count);
+    }
+
+    @Test
+    public void multiLineRadioGroupOnCheckChangeEmitOnlyCheckEvent() throws InterruptedException {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        MultiLineRadioGroup radioGroup = new MultiLineRadioGroup(appContext);
+        MultilineOnCheckedChangeListener listener = new MultilineOnCheckedChangeListener();
+        radioGroup.setOnCheckedChangeListener(listener);
+
+        final RadioButton firstButton = new RadioButton(appContext);
+        firstButton.setText("first");
+        firstButton.setId(R.id.multi_line_radio_group_default_radio_button);
+        radioGroup.addView(firstButton);
+        final RadioButton secondButton = new RadioButton(appContext);
+        secondButton.setText("second");
+        secondButton.setId(R.id.multi_line_radio_group_default_table_row);
+        radioGroup.addView(secondButton);
+
+        clickButton(secondButton);
+        clickButton(firstButton);
+
+        assertEquals(2, listener.count);
+        assertEquals(Arrays.asList("second", "first"), listener.buttonText);
+
+    }
+
+    @Test
     public void multiLineRadioGroupOnClickAgainDoesNotEmitEvent() throws InterruptedException {
         Context appContext = InstrumentationRegistry.getTargetContext();
         MultiLineRadioGroup radioGroup = new MultiLineRadioGroup(appContext);
@@ -129,6 +238,7 @@ public class MultiLineRadioGroupTest {
         clickAgainDoesNotEmitEvent(appContext, radioGroup);
 
         assertEquals(1, onCheckedChangeListener.count);
+        assertEquals(Collections.singletonList("second"), onCheckedChangeListener.buttonText);
     }
 
     @Test
@@ -153,11 +263,47 @@ public class MultiLineRadioGroupTest {
         assertTrue(radioButton.isChecked());
     }
 
+    @Test
+    public void clearCheckWhenNoListenerDoesNotCrash() throws InterruptedException {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
+        final RadioButton radioButton = new RadioButton(appContext);
+        testObject.addView(radioButton);
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
+            @Override
+            public void run() {
+                radioButton.performClick();
+                testObject.clearCheck();
+            }
+        });
+    }
+
+    @Test
+    public void clearCheckWhenNoButtonsDoesNotCrash() {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
+        final RadioButton radioButton = new RadioButton(appContext);
+
+        testObject.clearCheck();
+    }
+
+    @Test
+    public void clearCheckWhenButtonButNotCheckedDoesNothing() {
+        Context appContext = InstrumentationRegistry.getTargetContext();
+        final MultiLineRadioGroup testObject = new MultiLineRadioGroup(appContext);
+        final RadioButton radioButton = new RadioButton(appContext);
+        testObject.addView(radioButton);
+
+        testObject.clearCheck();
+    }
+
     @SuppressLint("SetTextI18n")
     private void clickAgainDoesNotEmitEvent(Context appContext, RadioGroup radioGroup) throws InterruptedException {
         final RadioButton firstButton = new RadioButton(appContext);
         firstButton.setText("first");
         firstButton.setId(R.id.multi_line_radio_group_default_radio_button);
+        radioGroup.addView(firstButton);
         final RadioButton secondButton = new RadioButton(appContext);
         secondButton.setText("second");
         secondButton.setId(R.id.multi_line_radio_group_default_table_row);
@@ -178,19 +324,32 @@ public class MultiLineRadioGroupTest {
 
     private static class CountingOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
         private int count;
+        private List<String> buttonText = new ArrayList<>();
+        private List<Boolean> buttonState = new ArrayList<>();
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId > 0) {
+                RadioButton button = (RadioButton) group.findViewById(checkedId);
+                buttonText.add(button.getText().toString());
+                buttonState.add(button.isChecked());
+            } else {
+                buttonText.add(null);
+            }
             ++count;
         }
     }
 
     private static class MultilineOnCheckedChangeListener implements MultiLineRadioGroup.OnCheckedChangeListener {
         private int count;
+        private List<String> buttonText = new ArrayList<>();
+        private List<Boolean> buttonState = new ArrayList<>();
 
         @Override
         public void onCheckedChanged(ViewGroup group, RadioButton button) {
             ++count;
+            buttonText.add(button.getText().toString());
+            buttonState.add(button.isChecked());
         }
     }
 }
