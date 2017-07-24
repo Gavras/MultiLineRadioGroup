@@ -54,8 +54,10 @@ public class MultiLineRadioGroup extends RadioGroup {
     // for generating ids to APIs lower than 17
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
-    // the listener for callbacks to invoke when radio button is checked
+    // the listener for callbacks to invoke when radio button checked state changes
     private OnCheckedChangeListener mOnCheckedChangeListener;
+    
+    // the listener for callbacks to invoke when radio button is clicked
     private OnClickListener mOnClickListener;
 
     // holds the maximum number of radio buttons that should be in a row
@@ -879,14 +881,14 @@ public class MultiLineRadioGroup extends RadioGroup {
 
     /**
      * Interface definition for a callback to be invoked when a radio button is clicked.
-     * clicking a radio button multiple times will result in multiple callbacks.
+     * Clicking a radio button multiple times will result in multiple callbacks.
      */
     public interface OnClickListener {
         /**
-         * Called when a radio button is checked.
+         * Called when a radio button is clicked.
          *
          * @param group  the group that stores the radio button
-         * @param button the radio button that was checked
+         * @param button the radio button that was clicked
          */
         void onClick(ViewGroup group, RadioButton button);
     }
