@@ -188,7 +188,9 @@ public class MultiLineRadioGroup extends RadioGroup {
     }
 
     /**
-     * Register a callback to be invoked when a radio button checked state changes
+     * Register a callback to be invoked when a radio button checked state changes.
+     * The only time the listener is passed a button where isChecked is false will be when
+     * you call clearCheck.
      *
      * @param onCheckedChangeListener the listener to attach
      */
@@ -196,6 +198,11 @@ public class MultiLineRadioGroup extends RadioGroup {
         this.mOnCheckedChangeListener = onCheckedChangeListener;
     }
 
+    /**
+     * Register a callback to be invoked when a radio button is clicked.
+     *
+     * @param listener the listener to attach
+     */
     public void setOnClickListener(OnClickListener listener) {
         this.mOnClickListener = listener;
     }
