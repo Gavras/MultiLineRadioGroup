@@ -56,7 +56,7 @@ public class MultiLineRadioGroup extends RadioGroup {
 
     // the listener for callbacks to invoke when radio button checked state changes
     private OnCheckedChangeListener mOnCheckedChangeListener;
-    
+
     // the listener for callbacks to invoke when radio button is clicked
     private OnClickListener mOnClickListener;
 
@@ -721,7 +721,12 @@ public class MultiLineRadioGroup extends RadioGroup {
 
         for (RadioButton radioButton : mRadioButtons) {
             if (radioButton.getId() == id) {
-                checkButton(radioButton);
+                if (checkButton(radioButton)) { // True if the button wasn't already checked.
+                    if (mOnCheckedChangeListener != null) {
+                        mOnCheckedChangeListener.onCheckedChanged(
+                                MultiLineRadioGroup.this, radioButton);
+                    }
+                }
                 return;
             }
         }
@@ -741,7 +746,12 @@ public class MultiLineRadioGroup extends RadioGroup {
 
         for (RadioButton radioButton : mRadioButtons) {
             if (radioButton.getText().equals(text)) {
-                checkButton(radioButton);
+                if (checkButton(radioButton)) { // True if the button wasn't already checked.
+                    if (mOnCheckedChangeListener != null) {
+                        mOnCheckedChangeListener.onCheckedChanged(
+                                MultiLineRadioGroup.this, radioButton);
+                    }
+                }
                 return;
             }
         }
@@ -757,10 +767,21 @@ public class MultiLineRadioGroup extends RadioGroup {
         if (index < 0 || index >= mRadioButtons.size())
             return;
 
-        checkButton(mRadioButtons.get(index));
+        if (checkButton(mRadioButtons.get(index))) { // True if the button wasn't already checked.
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChanged(
+                        MultiLineRadioGroup.this, mRadioButtons.get(index));
+            }
+        }
     }
 
-    // checks and switches the button with mCheckedButton, returns true if check state changes
+    /**
+     * Checks and switches the button with mCheckedButton.
+     * Returns true if check state changed, false otherwise.
+     *
+     * @param button the button to check.
+     * @return true if check state changed, false otherwise.
+     */
     private boolean checkButton(RadioButton button) {
         if (button == null || button == mCheckedButton) {
             return false;
@@ -870,6 +891,7 @@ public class MultiLineRadioGroup extends RadioGroup {
      * Interface definition for a callback to be invoked when a radio button is checked.
      */
     public interface OnCheckedChangeListener {
+
         /**
          * Called when a radio button is checked.
          *
@@ -884,6 +906,7 @@ public class MultiLineRadioGroup extends RadioGroup {
      * Clicking a radio button multiple times will result in multiple callbacks.
      */
     public interface OnClickListener {
+
         /**
          * Called when a radio button is clicked.
          *
