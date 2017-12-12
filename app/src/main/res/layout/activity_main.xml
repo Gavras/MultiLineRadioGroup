@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:multi_line_radio_group="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.app.MainActivity">
+
+    <com.whygraphics.multilineradiogroup.MultiLineRadioGroup
+        android:id="@+id/multi_line_radio_group"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        multi_line_radio_group:default_button="@string/button_2"
+        multi_line_radio_group:max_in_row="3"
+        multi_line_radio_group:radio_buttons="@array/radio_buttons"/>
+
+</android.support.constraint.ConstraintLayout>
